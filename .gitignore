@@ -1,0 +1,11 @@
+.venv*/
+.cache/
+.tmp/
+.scratch/
+.harbor-home/
+runs/
+jobs/
+__pycache__/
+*.pyc
+*.egg-info/
+build/

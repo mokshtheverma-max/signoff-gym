@@ -1,0 +1,6 @@
+#!/bin/bash
+# Signoff Gym: run a preview once, counted (PLAN.md F2.5 A and G).
+# The same bundle and checks as run_flow, in preview mode: the same stage
+# caps, stopping after global routing, counted against the task's preview
+# budget, never the full-run budget. Results go to /workspace/previews/<N>/.
+python3 -I -S /opt/sg/runner/make_bundle.py /workspace | /opt/sg/bin/sg-flow preview

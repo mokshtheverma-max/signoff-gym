@@ -1,0 +1,8 @@
+#!/bin/bash
+# Signoff Gym: run a preview once, counted (PLAN.md HT.5 D).
+# Sends /workspace/knobs.mk to the counted runner (/opt/sg/bin/sg-flow) in
+# preview mode: the same checks and caps as a full run, stopping after global
+# routing. Every preview that starts is recorded in /var/lib/sg/flow_runs.jsonl
+# against the task's preview budget, never the full-run budget. Results go to
+# /workspace/previews/<N>/.
+exec /opt/sg/bin/sg-flow preview < /workspace/knobs.mk

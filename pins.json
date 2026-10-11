@@ -1,0 +1,9 @@
+{
+  "orfs_image": "openroad/orfs@sha256:73d4aed887dc0552b2c8ad0581e10821ad4f9cf290a2436e54fb5c47ca132120",
+  "orfs_digest": "sha256:73d4aed887dc0552b2c8ad0581e10821ad4f9cf290a2436e54fb5c47ca132120",
+  "orfs_tag_when_pinned": "26Q3-615-gdb8b985f8",
+  "pinned_on": "2026-09-24",
+  "platform": "sky130hd",
+  "num_cores": 4,
+  "public_base_image": "localhost/signoff-gym-base:sky130hd-1"
+}

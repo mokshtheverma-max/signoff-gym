@@ -1,0 +1,31 @@
+ic circuit (no layout): SKY130_FD_SC_HD__SDFSTP_4
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SDFXBP_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SDFXBP_2
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SDFXTP_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SDFXTP_2
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SDFXTP_4
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SDLCLKP_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SDLCLKP_2
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SDLCLKP_4
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SEDFXBP_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SEDFXBP_2
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SEDFXTP_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SEDFXTP_2
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__SEDFXTP_4
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__TAPVGND2_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__TAPVGND_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__TAP_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__TAP_2
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__XNOR2_4
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__XNOR3_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__XNOR3_2
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__XNOR3_4
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__XOR2_4
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__XOR3_1
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__XOR3_2
+Flatten schematic circuit (no layout): SKY130_FD_SC_HD__XOR3_4
+Writing netlist: /sg/work/results/sky130hd/riscv32i/base/riscv_extracted.cir ..
+Writing LVS database: /sg/work/results/sky130hd/riscv32i/base/6_lvs.lvsdb ..
+Total elapsed: 13.870s  Memory: 580.00M
+INFO : Congratulations! Netlists match.
+Elapsed time: 0:14.86[h:]min:sec. CPU time: user 14.74 sys 0.21 (100%). Peak memory: 603980KB.

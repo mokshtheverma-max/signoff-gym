@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Blocks the commit on an em-dash, the banned kit name, or a red unit suite.
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+echo "pre-commit: text gate on staged files"
+"$ROOT/.venv/bin/python" "$ROOT/tools/textgate.py" --staged
+echo "pre-commit: unit suite"
+"$ROOT/tools/test.sh"

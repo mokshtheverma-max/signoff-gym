@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Blocks a commit message with an em-dash or the banned kit name.
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+exec "$ROOT/.venv/bin/python" "$ROOT/tools/textgate.py" --msg "$1"
