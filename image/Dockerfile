@@ -9,11 +9,16 @@
 # (OpenSTA inside OpenROAD, and KLayout): see THIRD-PARTY.md before you give one to anyone.
 #
 # Stage 1 is the upstream image, pinned by digest (the same digest as pins.json). It deletes every
-# platform folder except sky130hd, the example designs, the tutorials, the flow's own tests, the
-# tuner and the docs. Stage 2 copies what is left into an empty image, so the final image is a
-# single layer and no deleted file survives in a lower layer.
+# platform folder except sky130hd, and keeps the only two files the flow reads from other platform
+# folders: common/lcu_kogge_stone.v (synthesis maps with it) and sky130hs/rcx_patterns.rules
+# (sky130hd's rcx_patterns.rules is a link to it, and the finish stage's RC extraction reads it).
+# It also deletes the example designs, the tutorials, the flow's own tests, the tuner and the docs.
+# Stage 2 copies what is left into an empty image, so the final image is a single layer and no
+# deleted file survives in a lower layer.
 FROM openroad/orfs@sha256:73d4aed887dc0552b2c8ad0581e10821ad4f9cf290a2436e54fb5c47ca132120 AS upstream
-RUN find /OpenROAD-flow-scripts/flow/platforms -mindepth 1 -maxdepth 1 ! -name sky130hd -exec rm -rf {} + \
+RUN find /OpenROAD-flow-scripts/flow/platforms -mindepth 1 -maxdepth 1 ! -name sky130hd ! -name common ! -name sky130hs -exec rm -rf {} + \
+ && find /OpenROAD-flow-scripts/flow/platforms/common -mindepth 1 -maxdepth 1 ! -name lcu_kogge_stone.v -exec rm -rf {} + \
+ && find /OpenROAD-flow-scripts/flow/platforms/sky130hs -mindepth 1 -maxdepth 1 ! -name rcx_patterns.rules -exec rm -rf {} + \
  && rm -rf /OpenROAD-flow-scripts/flow/designs /OpenROAD-flow-scripts/flow/tutorials \
       /OpenROAD-flow-scripts/flow/test /OpenROAD-flow-scripts/tools/AutoTuner \
       /OpenROAD-flow-scripts/docs

@@ -16,7 +16,7 @@ Everything else in this repository was written for Signoff Gym and is under Apac
 
 ## 2. Only inside the image you build (never shipped by this repository)
 
-`image/Dockerfile` starts from the pinned OpenROAD flow image (ORFS), keeps only the sky130hd kit, and flattens the result into one layer. The tasks then add a few packages. A built image holds:
+`image/Dockerfile` starts from the pinned OpenROAD flow image (ORFS), keeps only the sky130hd kit plus the two files the flow reads from other platform folders (`common/lcu_kogge_stone.v` and `sky130hs/rcx_patterns.rules`), and flattens the result into one layer. The tasks then add a few packages. A built image holds:
 
 | Component | Licence, and where it was read | What sharing a built image asks |
 |---|---|---|
@@ -27,6 +27,7 @@ Everything else in this repository was written for Signoff Gym and is under Apac
 | KLayout (DRC and LVS) | GPL-3.0, as its GitHub repository is labelled (we read the label, not the full licence file) | As for OpenSTA: licence text plus complete corresponding source, or a written offer. |
 | kepler-formal (in the upstream image; these two tasks never run it, their Dockerfiles only lock it away from the agent) | Not read yet | Read its licence before sharing an image. |
 | SkyWater sky130hd platform files | Apache-2.0 | Keep the licence text and any notices; say what you changed. |
+| Two files from other ORFS platform folders: `flow/platforms/common/lcu_kogge_stone.v` (synthesis maps with it) and `flow/platforms/sky130hs/rcx_patterns.rules` (sky130hd's `rcx_patterns.rules` is a link to it; the finish stage's RC extraction reads it) | Not read: in the pinned image neither folder has a licence file and neither file has a licence header (read 23 October 2026) | Read their licences before sharing an image. |
 | Ubuntu 22.04 base packages | Each package's own licence, in `/usr/share/doc/<package>/copyright` inside the image | Keep those files in the image. |
 | Icarus Verilog `iverilog` 11.0-1.1, added to the agent image by each task's Dockerfile | GPL v2 (Ubuntu's package) | Licence text plus the source, or a written offer. |
 | tmux, added to the agent image (Harbor's terminus-2 agent uses it) | Ubuntu's package; its licence is in `/usr/share/doc/tmux/copyright` (we have not read it) | Keep that file. |
@@ -35,7 +36,7 @@ The simplest way to meet all of this is the one this repository takes: share the
 
 ## 3. Left out on purpose
 
-- **The other kits in the upstream image.** The upstream ORFS image carries several more kits. The recipe deletes every platform folder except sky130hd, and the flattening stage makes sure no deleted file survives in a lower layer. Two of the deleted kits, for the record: ASAP7, a predictive 7 nm kit, is BSD 3-Clause, and its university's site has called it "an academic and research aid only"; GT2N, a predictive 2 nm kit, is BSD 3-Clause. Neither is used here.
+- **The other kits in the upstream image.** The upstream ORFS image carries several more kits. The recipe deletes every platform folder except sky130hd (it keeps one file each from `common` and `sky130hs`, the two the flow reads), and the flattening stage makes sure no deleted file survives in a lower layer. Two of the deleted kits, for the record: ASAP7, a predictive 7 nm kit, is BSD 3-Clause, and its university's site has called it "an academic and research aid only"; GT2N, a predictive 2 nm kit, is BSD 3-Clause. Neither is used here.
 - **The ORFS example designs** (`flow/designs`), tutorials, the flow's own tests, the tuner and the docs: deleted by the recipe; the tasks do not use them. If a later public task uses one of those designs, its own notice comes with it. For example, riscv32i's folder carries Apache-2.0 text that names no copyright holder, and the jpeg encoder needs its ASICs World Services attribution and Richard Herveille's notice in every source file.
 
 ## 4. Tools you install yourself
