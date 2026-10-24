@@ -44,6 +44,27 @@ FLOW_PLATFORMS = "/OpenROAD-flow-scripts/flow/platforms"
 #     it a grade's finish.log shows "[ERROR RCX-0468] Can't open extraction model file" and the
 #     flow stops.
 PLATFORM_READS = ("{platform}", "common/lcu_kogge_stone.v", "sky130hs/rcx_patterns.rules")
+KEPLER_FORMAL_INSTALL = "/OpenROAD-flow-scripts/tools/install/kepler-formal"
+# kepler-formal, the flow's equivalence checker, from the source the pinned image was built from:
+# ORFS 26Q3-615-gdb8b985f8 pins it as its submodule tools/kepler-formal at this commit.
+KEPLER_FORMAL_SOURCE = "https://github.com/keplertech/kepler-formal.git#f70c2e38592d704c8cccf68433b091e82c8118f0"
+# How that ORFS builds it: build_openroad.sh lines 401 to 409, with ${DIR} = /OpenROAD-flow-scripts
+# and ${INSTALL_PATH} = /OpenROAD-flow-scripts/tools/install as in ORFS's own image build. Line 403
+# adds -march=native, so the upstream binary carries the AVX-512 instructions of the machine that
+# built it; the recipe rebuilds it with every other option kept.
+UPSTREAM_KEPLER_FORMAL_CONFIGURE = (
+    "cmake", "-B", "tools/kepler-formal/build", "tools/kepler-formal",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DCMAKE_CXX_FLAGS_RELEASE=-Ofast -march=native -ffast-math -flto",
+    "-DCMAKE_EXE_LINKER_FLAGS=-flto",
+    "-DCMAKE_BUILD_RPATH=/OpenROAD-flow-scripts/tools/kepler-formal/build/thirdparty/naja/src/dnl:"
+    "/OpenROAD-flow-scripts/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:"
+    "/OpenROAD-flow-scripts/tools/kepler-formal/build/thirdparty/naja/src/optimization",
+    f"-DCMAKE_INSTALL_RPATH={KEPLER_FORMAL_INSTALL}/lib",
+    "-DCMAKE_BUILD_WITH_INSTALL_RPATH=OFF",
+    "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF",
+    f"-DCMAKE_INSTALL_PREFIX={KEPLER_FORMAL_INSTALL}",
+)
 
 
 def _pins():
@@ -212,11 +233,27 @@ def test_base_recipe_keeps_nothing_else_under_platforms_but_the_kit():
             assert sorted(_names_kept(commands, f"{FLOW_PLATFORMS}/{folder}") or []) == names, folder
 
 
+def test_base_recipe_rebuilds_kepler_formal_without_march_native():
+    lines = _bytes(REPO, "image", "Dockerfile").decode("utf-8").splitlines()
+    assert not any("-march=native" in line for line in lines if not line.startswith("#"))
+    commands = _stage_commands("kepler-formal")
+    configure = [words for words in commands if words[:2] == ["cmake", "-B"]]
+    assert configure == [[word.replace("-march=native ", "") for word in UPSTREAM_KEPLER_FORMAL_CONFIGURE]]
+    assert ["cmake", "--build", "tools/kepler-formal/build", "--target", "install", "-j", "$(nproc)"] in commands
+    # A clean prefix first, so no upstream file can ride along into the copy below.
+    assert commands[:1] == [["rm", "-rf", KEPLER_FORMAL_INSTALL]]
+    assert f"ADD {KEPLER_FORMAL_SOURCE} /OpenROAD-flow-scripts/tools/kepler-formal" in lines
+    # The final image holds only the rebuilt copy: the upstream stage deletes its own first.
+    assert _deleted_by(_stage_commands("upstream"), KEPLER_FORMAL_INSTALL)
+    assert f"COPY --from=kepler-formal {KEPLER_FORMAL_INSTALL} {KEPLER_FORMAL_INSTALL}" in lines
+
+
 def test_base_recipe_pins_upstream_and_flattens():
     pins = _pins()
     lines = _bytes(REPO, "image", "Dockerfile").decode("utf-8").splitlines()
     froms = [line for line in lines if line.startswith("FROM ")]
-    assert froms == [f"FROM {pins['orfs_image']} AS upstream", "FROM scratch"]
+    assert froms == [f"FROM {pins['orfs_image']} AS kepler-formal", f"FROM {pins['orfs_image']} AS upstream",
+                     "FROM scratch"]
     text = "\n".join(lines)
     for folder in ("flow/designs", "flow/tutorials", "flow/test", "tools/AutoTuner", "docs"):
         assert f"/OpenROAD-flow-scripts/{folder}" in text, folder
